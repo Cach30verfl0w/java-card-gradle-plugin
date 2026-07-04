@@ -24,7 +24,7 @@ plugins {
     alias(libs.plugins.javaCardGradle)
 }
 
-group = "net.cacheoverflow.javacard.example"
+group = "net.cacheoverflow.javacard"
 version = "1.0"
 
 dependencies {
@@ -36,7 +36,7 @@ dependencies {
 
 javaCard {
     cardVersion.set(JavaCardVersion.VERSION_304)
-    namespace.set("net.cacheoverflow.javacard.example")
+    namespace.set("net.cacheoverflow.example")
     appletId.set("0x01:0x02:0x03:0x04:0x05:0x06")
     sdkFolder.set(layout.projectDirectory.dir("sdks/jc320v26.0_kit"))
 
@@ -44,5 +44,9 @@ javaCard {
         create("TestApplet") {
             appletId.set(0x00)
         }
+    }
+
+    globalPlatform {
+
     }
 }

@@ -17,9 +17,11 @@
 package net.cacheoverflow.javacard.plugin.dsl
 
 import net.cacheoverflow.javacard.plugin.util.JavaCardVersion
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaCompiler
 import org.gradle.jvm.toolchain.JavaLauncher
@@ -29,7 +31,9 @@ import javax.inject.Inject
  * @author Cedric Hammes
  * @since  04/07/2026
  */
-abstract class JavaCardExtension @Inject constructor(project: Project) {
+abstract class JavaCardExtension @Inject constructor(project: Project, objects: ObjectFactory) {
+    val globalPlatform: JavaCardGlobalPlatform = objects.newInstance(JavaCardGlobalPlatform::class.java)
+
     abstract val applets: NamedDomainObjectContainer<JavaCardApplet>
     abstract val cardVersion: Property<JavaCardVersion>
     abstract val toolLauncher: Property<JavaLauncher>
@@ -45,5 +49,9 @@ abstract class JavaCardExtension @Inject constructor(project: Project) {
         this.javaCompiler.finalizeValueOnRead()
         this.sdkFolder.finalizeValueOnRead()
         this.appletId.finalizeValueOnRead()
+    }
+
+    fun globalPlatform(action: Action<JavaCardGlobalPlatform>) {
+        action.execute(globalPlatform)
     }
 }

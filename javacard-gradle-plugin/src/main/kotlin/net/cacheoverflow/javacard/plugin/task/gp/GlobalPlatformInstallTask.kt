@@ -14,41 +14,43 @@
  * limitations under the License.
  */
 
-package net.cacheoverflow.javacard.plugin.task.sdk
+package net.cacheoverflow.javacard.plugin.task.gp
 
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 /**
  * @author Cedric Hammes
- * @since  04/07/2026
+ * @since  05/07/2026
  */
 @CacheableTask
-abstract class JavaCardCompileAppletTask : JavaCardToolBaseTask() {
+abstract class GlobalPlatformInstallTask : GlobalPlatformBaseTask() {
+
+    @get:Input
+    abstract val cardKey: Property<String>
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val appletConfigFile: RegularFileProperty
+    abstract val appletFile: RegularFileProperty
 
-    @get:OutputDirectory // This is just here so Gradle can calculate correctly
-    abstract val outputFolder: DirectoryProperty
-
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val inputFiles: ConfigurableFileCollection
+    init {
+        cardKey.convention(DEFAULT_CARD_KEY).finalizeValueOnRead()
+    }
 
     @TaskAction
-    fun executeTask() = runTool { execSpec ->
-        execSpec.mainClass.set("com.sun.javacard.converter.Main")
-        execSpec.args = listOf("-config", appletConfigFile.get().asFile.absolutePath)
+    fun executeTask() = runTool { spec ->
+        // TODO: Add debug mode
+        spec.args = listOf("-key", cardKey.get(), "-install", appletFile.get().asFile.absolutePath)
+    }
+
+    companion object {
+        const val DEFAULT_CARD_KEY: String = "404142434445464748494A4B4C4D4E4F"
     }
 
 }

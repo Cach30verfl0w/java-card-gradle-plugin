@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.cacheoverflow.javacard.example;
+package net.cacheoverflow.example;
 
 import javacard.framework.APDU;
 import javacard.framework.Applet;

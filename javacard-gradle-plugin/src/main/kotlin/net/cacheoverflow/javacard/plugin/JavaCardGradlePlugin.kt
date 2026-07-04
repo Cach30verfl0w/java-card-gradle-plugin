@@ -17,6 +17,8 @@
 package net.cacheoverflow.javacard.plugin
 
 import net.cacheoverflow.javacard.plugin.dsl.JavaCardExtension
+import net.cacheoverflow.javacard.plugin.task.gp.GlobalPlatformDownloadTask
+import net.cacheoverflow.javacard.plugin.task.gp.GlobalPlatformInstallTask
 import net.cacheoverflow.javacard.plugin.task.sdk.JavaCardCompileAppletTask
 import net.cacheoverflow.javacard.plugin.task.sdk.JavaCardCreateConfigTask
 import net.cacheoverflow.javacard.plugin.util.create
@@ -24,7 +26,6 @@ import net.cacheoverflow.javacard.plugin.util.register
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.internal.extensions.core.serviceOf
@@ -57,7 +58,7 @@ abstract class JavaCardGradlePlugin : Plugin<Project> {
         val appletOutputFolder = project.layout.buildDirectory.dir("applet-output")
         val appletConfigFile = project.layout.buildDirectory.file("applet-config.conf")
         val createAppletConfigTask = project.tasks.register<JavaCardCreateConfigTask>("createAppletConfig") { spec ->
-            spec.group = SDK_TASK_GROUP_ID
+            spec.group = TASK_GROUP_ID
             spec.description = "Build the config for the Java Card SDK converter"
 
             spec.dependsOn(project.tasks.withType(JavaCompile::class.java))
@@ -68,13 +69,32 @@ abstract class JavaCardGradlePlugin : Plugin<Project> {
 
         @Suppress("UnstableApiUsage")
         val compileAppletTask = project.tasks.register<JavaCardCompileAppletTask>("compileApplet") { spec ->
-            spec.group = SDK_TASK_GROUP_ID
+            spec.group = TASK_GROUP_ID
             spec.description = "Convert the compiled Java source code into an applet"
 
             spec.dependsOn(createAppletConfigTask, project.tasks.withType(JavaCompile::class.java))
             spec.inputFiles.convention(mainSourceSet.map { sources -> sources.allSource.sourceDirectories })
             spec.appletConfigFile.convention(appletConfigFile)
             spec.outputFolder.convention(appletOutputFolder)
+        }
+
+        val globalPlatformFile = project.layout.buildDirectory.file("general-platform.jar") // TODO: Option over extension
+        val gpDownloadTask = project.tasks.register<GlobalPlatformDownloadTask>("downloadGlobalPlatform") { spec ->
+            spec.group = TASK_GROUP_ID
+            spec.description = "Download the General Platform tooling required for future tooling use"
+
+            spec.outputFile.convention(globalPlatformFile)
+        }
+
+        val gpInstallTask = project.tasks.register<GlobalPlatformInstallTask>("installApplet") { spec ->
+            spec.group = TASK_GROUP_ID
+            spec.description = "Install the applet using GeneralPlatformPro to the card"
+
+            spec.dependsOn(gpDownloadTask, compileAppletTask)
+            spec.toolFile.convention(globalPlatformFile)
+            spec.appletFile.convention(appletOutputFolder.zip(extension.namespace) { outputFolder, namespace ->
+                outputFolder.dir(namespace.replace(".", "/")).dir("javacard").file("example.cap")
+            })
         }
 
         project.afterEvaluate {
@@ -89,9 +109,6 @@ abstract class JavaCardGradlePlugin : Plugin<Project> {
 
     companion object {
         const val EXT_NAME: String = "javaCard"
-        const val SDK_TASK_GROUP_ID = "javacard sdk"
-
-        const val TOOLS_PATH_ENV_VAR: String = "JC_HOME"
-        const val TOOLS_PATH_PROPERTY: String = "javacard.sdk"
+        const val TASK_GROUP_ID = "javacard applet"
     }
 }

@@ -22,6 +22,10 @@ plugins {
 group = property("project.group").toString()
 version = libs.versions.javaCardGradle.toString()
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compileOnly(gradleApi())
     implementation(kotlin("stdlib"))
