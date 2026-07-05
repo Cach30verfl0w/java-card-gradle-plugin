@@ -92,6 +92,16 @@ mavenPublishing {
     }
 }
 
+kotlin {
+    jvmToolchain(libs.versions.jvmTarget.get().toInt())
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.jvmTarget.get()))
+    }
+}
+
 gradlePlugin {
     website = pluginWebsite
     vcsUrl = pluginWebsite

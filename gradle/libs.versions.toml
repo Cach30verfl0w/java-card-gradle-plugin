@@ -1,7 +1,8 @@
 [versions]
-javaCardGradle = "1.0.0"
+javaCardGradle = "1.0.1"
 kotlin = "2.4.0" # https://github.com/JetBrains/kotlin/releases
 mavenPublish = "0.36.0" # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
+jvmTarget = "21"
 
 # Plugins
 buildConfig = "6.0.10" # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
