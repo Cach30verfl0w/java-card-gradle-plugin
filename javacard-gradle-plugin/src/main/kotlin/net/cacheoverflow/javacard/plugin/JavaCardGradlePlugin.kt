@@ -23,6 +23,7 @@ import net.cacheoverflow.javacard.plugin.task.gp.GlobalPlatformDownloadTask
 import net.cacheoverflow.javacard.plugin.task.gp.GlobalPlatformInstallTask
 import net.cacheoverflow.javacard.plugin.task.sdk.JavaCardCompileAppletTask
 import net.cacheoverflow.javacard.plugin.task.sdk.JavaCardCreateConfigTask
+import net.cacheoverflow.javacard.plugin.task.simulator.JavaCardSimulatorDownloadTask
 import net.cacheoverflow.javacard.plugin.util.create
 import net.cacheoverflow.javacard.plugin.util.register
 import org.gradle.api.GradleException
@@ -99,7 +100,6 @@ abstract class JavaCardGradlePlugin : Plugin<Project> {
             })
         }
 
-
         val gpDeleteTask = project.tasks.register<GlobalPlatformDeleteTask>("deleteApplet") { spec ->
             spec.group = TASK_GROUP_ID
             spec.description = "Delete the applet using GeneralPlatformPro from the card if installed"
@@ -111,6 +111,13 @@ abstract class JavaCardGradlePlugin : Plugin<Project> {
             spec.appletFile.convention(appletOutputFolder.zip(extension.namespace) { outputFolder, namespace ->
                 outputFolder.dir(namespace.replace(".", "/")).dir("javacard").file("${namespace.split(".").last()}.cap")
             })
+        }
+
+        val simulatorDownloadTask = project.tasks.register<JavaCardSimulatorDownloadTask>("downloadJCardEngine") { spec ->
+            spec.group = TASK_GROUP_ID
+            spec.description = "Download the tooling required to run the JCard Engine for simulation"
+
+            spec.outputFile.convention(extension.simulator.executableFile)
         }
 
         project.afterEvaluate {

@@ -24,10 +24,10 @@ import javax.inject.Inject
  * @author Cedric Hammes
  * @since  05/07/2026
  */
-abstract class JavaCardGlobalPlatform @Inject constructor(project: Project) {
+abstract class JavaCardSimulatorExtension @Inject constructor(project: Project) {
     abstract val executableFile: RegularFileProperty
 
     init {
-        executableFile.convention(project.layout.buildDirectory.file("general-platform.jar")).finalizeValueOnRead()
+        executableFile.convention(project.layout.buildDirectory.file("jcard-engine.jar")).finalizeValueOnRead()
     }
 }

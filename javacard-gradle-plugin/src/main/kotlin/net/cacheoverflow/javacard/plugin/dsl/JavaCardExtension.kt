@@ -32,7 +32,8 @@ import javax.inject.Inject
  * @since  04/07/2026
  */
 abstract class JavaCardExtension @Inject constructor(project: Project, objects: ObjectFactory) {
-    val globalPlatform: JavaCardGlobalPlatform = objects.newInstance(JavaCardGlobalPlatform::class.java)
+    val globalPlatform: JavaCardGlobalPlatformExtension = objects.newInstance(JavaCardGlobalPlatformExtension::class.java)
+    val simulator: JavaCardSimulatorExtension = objects.newInstance(JavaCardSimulatorExtension::class.java)
 
     abstract val applets: NamedDomainObjectContainer<JavaCardApplet>
     abstract val cardVersion: Property<JavaCardVersion>
@@ -51,7 +52,11 @@ abstract class JavaCardExtension @Inject constructor(project: Project, objects: 
         this.appletId.finalizeValueOnRead()
     }
 
-    fun globalPlatform(action: Action<JavaCardGlobalPlatform>) {
+    fun globalPlatform(action: Action<JavaCardGlobalPlatformExtension>) {
         action.execute(globalPlatform)
+    }
+
+    fun simulator(action: Action<JavaCardSimulatorExtension>) {
+        action.execute(simulator)
     }
 }

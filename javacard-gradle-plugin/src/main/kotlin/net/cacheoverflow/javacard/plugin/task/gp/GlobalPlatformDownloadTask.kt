@@ -16,6 +16,7 @@
 
 package net.cacheoverflow.javacard.plugin.task.gp
 
+import net.cacheoverflow.javacard.plugin.task.AbstractDownloadTask
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
@@ -33,48 +34,13 @@ import java.security.MessageDigest
  * @since  05/07/2026
  */
 @CacheableTask
-abstract class GlobalPlatformDownloadTask : DefaultTask() {
-
-    @get:Input
-    abstract val version: Property<String>
-
-    @get:Input
-    abstract val checksum: Property<String>
-
-    @get:OutputFile
-    abstract val outputFile: RegularFileProperty
-
+abstract class GlobalPlatformDownloadTask : AbstractDownloadTask() {
     init {
         version.convention(DEFAULT_GP_VERSION).finalizeValueOnRead()
         checksum.convention(DEFAULT_GP_CHECKSUM).finalizeValueOnRead()
     }
 
-    @TaskAction
-    fun executeTask() {
-        val parts = checksum.get().split(":")
-        if (parts.size != 2) {
-            throw IllegalArgumentException("Checksum is expected to be in format 'algorithm:checksum'")
-        }
-
-        val checksumValue = parts[1]
-        val checksumAlgorithm = parts[0]
-        val outputFile = outputFile.get().asFile
-        URI("${DOWNLOAD_MIRROR_BASE_URL}/v${version.get()}/gp.jar").toURL().openStream().use { inputStream ->
-            val digest = MessageDigest.getInstance(checksumAlgorithm)
-            DigestInputStream(inputStream, digest).use { digestInputStream ->
-                outputFile.outputStream().use { outputStream ->
-                    digestInputStream.copyTo(outputStream)
-                }
-            }
-
-            val expectedHash = checksumValue.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
-            if (!MessageDigest.isEqual(digest.digest(), expectedHash)) {
-                if (outputFile.exists())
-                    outputFile.delete()
-                throw GradleException("The checksum is invalid! The file is corrupt or has been tempered!")
-            }
-        }
-    }
+    override fun buildUrl(version: String): URI = URI("$DOWNLOAD_MIRROR_BASE_URL/v$version/gp.jar")
 
     companion object {
         const val DOWNLOAD_MIRROR_BASE_URL: String = "https://github.com/martinpaljak/GlobalPlatformPro/releases/download"

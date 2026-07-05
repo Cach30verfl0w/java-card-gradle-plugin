@@ -32,6 +32,10 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
+/**
+ * @author Cedric Hammes
+ * @since  04/07/2026
+ */
 @CacheableTask
 abstract class JavaCardCreateConfigTask : DefaultTask() {
 
