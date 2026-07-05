@@ -16,11 +16,16 @@
 
 plugins {
     kotlin("jvm")
+    alias(libs.plugins.buildConfig)
     `java-gradle-plugin`
 }
 
 group = property("project.group").toString()
 version = libs.versions.javaCardGradle.toString()
+
+buildConfig {
+    buildConfigField("PLUGIN_DISPLAY_NAME", property("project.plugin.displayName").toString())
+}
 
 repositories {
     mavenCentral()

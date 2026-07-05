@@ -1,7 +1,9 @@
 [versions]
 javaCardGradle = "0.0.1"
 kotlin = "2.4.0" # https://github.com/JetBrains/kotlin/releases
+buildConfig = "6.0.10" # https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 javaCardGradle = { id = "net.cacheoverflow.gradle.javacard", version.ref = "javaCardGradle" }
+buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }

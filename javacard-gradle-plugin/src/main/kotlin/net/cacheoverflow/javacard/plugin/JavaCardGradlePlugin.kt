@@ -16,6 +16,7 @@
 
 package net.cacheoverflow.javacard.plugin
 
+import net.cacheoverflow.javacard.javacard_gradle_plugin.BuildConfig
 import net.cacheoverflow.javacard.plugin.dsl.JavaCardExtension
 import net.cacheoverflow.javacard.plugin.task.gp.GlobalPlatformDeleteTask
 import net.cacheoverflow.javacard.plugin.task.gp.GlobalPlatformDownloadTask
@@ -40,8 +41,7 @@ import org.gradle.jvm.toolchain.JavaToolchainService
 abstract class JavaCardGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         if (!project.pluginManager.hasPlugin("java")) {
-            // TODO: Inject name with compile-time generated class containing information?
-            throw GradleException("'JavaCard Gradle Plugin' requires the 'java' plugin to be applied.")
+            throw GradleException("'${BuildConfig.PLUGIN_DISPLAY_NAME}' requires the 'java' plugin to be applied.")
         }
 
         val toolchainService = project.serviceOf<JavaToolchainService>()
