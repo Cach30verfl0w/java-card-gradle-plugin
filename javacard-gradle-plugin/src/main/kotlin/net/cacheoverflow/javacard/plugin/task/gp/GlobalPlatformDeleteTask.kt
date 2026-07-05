@@ -30,6 +30,8 @@ import org.gradle.api.tasks.TaskAction
 /**
  * @author Cedric Hammes
  * @since  05/07/2026
+ *
+ * @see <a href="https://github.com/martinpaljak/GlobalPlatformPro">GlobalPlatformPro, GitHub</a>
  */
 @CacheableTask
 abstract class GlobalPlatformDeleteTask : GlobalPlatformBaseTask() {

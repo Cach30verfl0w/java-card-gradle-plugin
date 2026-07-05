@@ -23,6 +23,8 @@ import java.net.URI
 /**
  * @author Cedric Hammes
  * @since  05/07/2026
+ *
+ * @see <a href="https://github.com/martinpaljak/JCardEngine">JCardEngine, GitHub</a>
  */
 @CacheableTask
 abstract class JavaCardSimulatorDownloadTask : AbstractDownloadTask() {

@@ -23,6 +23,8 @@ import javax.inject.Inject
 /**
  * @author Cedric Hammes
  * @since  05/07/2026
+ *
+ * @see <a href="https://github.com/martinpaljak/JCardEngine">JCardEngine, GitHub</a>
  */
 abstract class JavaCardSimulatorExtension @Inject constructor(project: Project) {
     abstract val executableFile: RegularFileProperty
